@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',    
     'rest_framework',
+    'rest_framework_simplejwt',
     'api',
 ]
 
@@ -130,3 +131,14 @@ REST_FRAMEWORK = {
     ),
 }
 SECRET_KEY = 'z9&$f!3j@k^8b#l%q1w*e+r6u5y8t0o9p'  
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'API',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
