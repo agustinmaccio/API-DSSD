@@ -1,10 +1,10 @@
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
-
+from .serializers import UserRegistrationSerializer
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -26,3 +26,11 @@ class UserLoginView(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Credenciales inválidas"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class UserRegistrationView(APIView):
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()  # Guarda el nuevo usuario
+            return Response({"message": "Usuario registrado con éxito"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
