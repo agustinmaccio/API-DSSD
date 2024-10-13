@@ -1,10 +1,17 @@
+import json
+import pprint
+from django.utils import timezone 
+from django.shortcuts import render
+from django.http import JsonResponse
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from django.shortcuts import render, redirect
 from .serializers import UserRegistrationSerializer
+
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -26,6 +33,49 @@ class UserLoginView(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Credenciales inválidas"}, status=status.HTTP_401_UNAUTHORIZED)
+
+def home(request):
+    # Si el usuario no es un depósito, simplemente renderizar la página
+    return render(request, 'home.html')
+
+
+def CRC(request):
+    # Lógica para la página de inicio de sesión
+    return render(request, 'CRC.html')
+
+
+def carga_pedidos(request):
+    return render(request, 'carga_pedidos.html')
+
+def carga_pedidos(request):
+    if request.method == 'POST':
+        # Procesar el JSON recibido
+        try:
+            # Cargar el JSON desde el body de la petición
+            data = json.loads(request.body)
+
+            # Obtener cliente_id, por ejemplo, del usuario autenticado
+            id_cliente = request.user.id if request.user.is_authenticated else 'test_1'
+
+            # Obtener la fecha actual
+            date_now = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            # Agregar el cliente_id y la fecha al dict de respuesta
+            response_data = {
+                'data': data,
+                'cliente_id': id_cliente,
+                'fecha': date_now
+            }
+
+            ### TODO guarda en API
+            pprint.pprint(response_data)
+
+            # Aquí puedes hacer lo que necesites con los datos recibidos
+            return JsonResponse({'success': True, 'data': data}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    return render(request, 'carga_pedidos.html')
         
 class UserRegistrationView(APIView):
     def post(self, request):
