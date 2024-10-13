@@ -1,3 +1,8 @@
+import json
+import pprint
+from django.utils import timezone 
+from django.shortcuts import render
+from django.http import JsonResponse
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -41,13 +46,6 @@ def CRC(request):
 
 def carga_pedidos(request):
     return render(request, 'carga_pedidos.html')
-
-
-import json
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.utils import timezone 
-import pprint
 
 def carga_pedidos(request):
     if request.method == 'POST':
