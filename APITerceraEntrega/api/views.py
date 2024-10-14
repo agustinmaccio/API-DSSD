@@ -10,7 +10,8 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.shortcuts import render, redirect
-from .serializers import UserRegistrationSerializer
+from .serializers import UserRegistrationSerializer, PedidoSerializer
+from .models import Pedido
 
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
@@ -55,20 +56,17 @@ def carga_pedidos(request):
             data = json.loads(request.body)
 
             # Obtener cliente_id, por ejemplo, del usuario autenticado
-            id_cliente = request.user.id if request.user.is_authenticated else 'test_1'
+            id_cliente = request.user.id if request.user.is_authenticated else 'User Test'
 
             # Obtener la fecha actual
             date_now = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
 
-            # Agregar el cliente_id y la fecha al dict de respuesta
-            response_data = {
-                'data': data,
-                'cliente_id': id_cliente,
-                'fecha': date_now
-            }
 
-            ### TODO guarda en API
-            pprint.pprint(response_data)
+
+            ### TODO guarda en BBDD
+            # pedido = Pedido(cliente=id_cliente, fecha=date_now, data=data)
+            pedido = Pedido(fecha=date_now, data=data)
+            pedido.save()
 
             # Aquí puedes hacer lo que necesites con los datos recibidos
             return JsonResponse({'success': True, 'data': data}, status=200)
@@ -84,3 +82,12 @@ class UserRegistrationView(APIView):
             serializer.save()  # Guarda el nuevo usuario
             return Response({"message": "Usuario registrado con éxito"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PedidosAPIView(APIView):
+    def get(self, request):
+        today = timezone.now().date() 
+        pedidos = Pedido.objects.filter(fecha__date=today)
+        serializer = PedidoSerializer(pedidos, many=True)
+        return Response(serializer.data)
+        
