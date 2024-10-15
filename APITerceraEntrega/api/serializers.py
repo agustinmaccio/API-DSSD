@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from .models import Pedido
 from rest_framework import serializers
 from django.contrib.auth.models import Group
 
@@ -46,3 +47,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError("El nombre no puede estar vacío.")
         return value
+    
+
+class PedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pedido
+        fields = ['fecha', 'data']  # O usa '__all__' si quieres todos los campos

@@ -8,4 +8,5 @@ urlpatterns = [
     path('CRC/',            views.CRC,                      name='CRC'),    
     path('carga_pedidos/',  views.carga_pedidos,            name='carga_pedidos'),
     path('register/', views.UserRegistrationView.as_view(), name='user-register'),
+    path('listPedidos/', views.PedidosAPIView.as_view(), name='list-pedidos'),
 ]
