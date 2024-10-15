@@ -1,18 +1,48 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from django.contrib.auth.models import Group
+
+User = get_user_model()
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    rol = serializers.ChoiceField(choices=[
+        ('depositos_globales', 'Depósitos Globales'),
+        ('depositos_proveedores', 'Depósitos Proveedores')
+    ])
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'email', 'password', 'direccion', 'telefono', 'nombre', 'rol')
 
     def create(self, validated_data):
         # Crea un nuevo usuario usando el método create_user de Django
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email'),
-            password=validated_data['password']
+            password=validated_data['password'],
+            direccion=validated_data.get('direccion', ''),
+            telefono=validated_data.get('telefono', ''),
+            nombre=validated_data.get('nombre', '')
         )
+
+        # Asignar el rol correspondiente al grupo
+        rol = validated_data.get('rol')
+        if rol == 'depositos_globales':
+            group, created = Group.objects.get_or_create(name='Depósitos Globales')
+            user.groups.add(group)
+        elif rol == 'depositos_proveedores':
+            group, created = Group.objects.get_or_create(name='Depósitos Proveedores')
+            user.groups.add(group)
+
         return user
+
+    def validate_telefono(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError("El teléfono debe contener solo dígitos.")
+        return value
+
+    def validate_nombre(self, value):
+        if not value:
+            raise serializers.ValidationError("El nombre no puede estar vacío.")
+        return value

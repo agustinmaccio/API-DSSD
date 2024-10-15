@@ -135,10 +135,12 @@ SECRET_KEY = 'z9&$f!3j@k^8b#l%q1w*e+r6u5y8t0o9p'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'postgres1',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
+AUTH_USER_MODEL = 'api.CustomUser'

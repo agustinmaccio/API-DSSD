@@ -25,7 +25,7 @@ class UserLoginView(APIView):
         if user is not None:
             # Generar tokens JWT
             access = AccessToken.for_user(user)
-            refresh = RefreshToken.for_user(user)
+            refresh = RefreshToken.for_user(user)   
 
             return Response({
                 "refresh": str(refresh),
