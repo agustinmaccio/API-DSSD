@@ -1,9 +1,10 @@
-version: '3'
+version: '3.8'
+
 services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_DB: postgres
+      POSTGRES_DB: tpapi
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     volumes:
@@ -15,17 +16,17 @@ services:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/app
+      - .:/code
     ports:
       - "8000:8000"
+    environment:
+      DATABASE_NAME: tpapi
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: root
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
     depends_on:
       - db
-    environment:
-      - DB_HOST=db
-      - DB_NAME=postgres
-      - DB_USER=postgres
-      - DB_PASS=root
-      - DB_PORT=5432
 
 volumes:
   postgres_data:
